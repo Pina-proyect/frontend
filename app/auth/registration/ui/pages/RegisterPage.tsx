@@ -1,4 +1,4 @@
-import { useState } from "react";
+/* import { useState } from "react";
 import StepPersonal from "../components/StepPersonal";
 import StepDNI from "../components/StepDNI";
 import StepSelfie from "../components/StepSelfie";
@@ -106,7 +106,6 @@ export default function RegisterPage() {
         </div>
       )}
 
-      {/* Controles del wizard */}
       <nav className="flex gap-2">
         {step > 0 && <button onClick={back}>Atrás</button>}
         {step < 3 && (
@@ -130,4 +129,11 @@ function Progress({ step }: { step: number }) {
       ))}
     </ol>
   );
+}
+ */
+
+import React from "react";
+
+export default function RegisterPage() {
+  return <div>RegisterPage</div>;
 }
