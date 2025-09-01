@@ -1,38 +1,36 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { selfieSchema, type SelfieData } from "../../model/register";
+import React from "react";
 
-type Props = {
-  onNext: (data: SelfieData) => void;
+export default function StepSelfie({
+  onBack,
+  onNext,
+  loading,
+}: {
   onBack: () => void;
-  defaultValues?: Partial<SelfieData>;
-};
-
-export default function StepSelfie({ onNext, onBack, defaultValues }: Props) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<SelfieData>({
-    resolver: zodResolver(selfieSchema),
-    defaultValues,
-  });
-
+  onNext: (file: File) => void;
+  loading?: boolean;
+}) {
+  const [file, setFile] = React.useState<File | null>(null);
   return (
-    <form onSubmit={handleSubmit(onNext)} className="grid gap-3">
-      <label>
-        Selfie
-        <input type="file" accept="image/*" {...register("selfie_file")} />
-        {errors.selfie_file && (
-          <small>{errors.selfie_file.message as string}</small>
-        )}
-      </label>
-
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        if (file) onNext(file);
+      }}
+      className="grid gap-2"
+    >
+      <label>Subí tu selfie</label>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+      />
       <div className="flex gap-2">
         <button type="button" onClick={onBack}>
-          Atrás
+          Volver
         </button>
-        <button type="submit">Continuar</button>
+        <button type="submit" disabled={!file || loading}>
+          {loading ? "Subiendo..." : "Siguiente"}
+        </button>
       </div>
     </form>
   );

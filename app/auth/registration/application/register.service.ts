@@ -1,63 +1,52 @@
-// Orquesta el wizard y el polling KYC. Hace la conversión File -> base64.
-import { registrationGateway } from "../infra/registration.gateway";
-import type { IRegistrationGateway } from "../model/registration.port";
-import type {
-  DniData,
-  PersonalData,
-  SelfieData,
-  RegisterPayload,
-  KycStatus,
+import {
+  dniSchema,
+  personalSchema,
+  selfieSchema,
+  registerInputSchema,
+  type DniData,
+  type PersonalData,
+  type SelfieData,
+  type RegisterInput,
+  type RegisteredUser,
+  RegistrationError,
 } from "../model/register";
+import type { RegistrationPort } from "../model/registration.port";
 
-async function fileToBase64(file: File): Promise<string> {
-  const buf = await file.arrayBuffer();
-  const bytes = new Uint8Array(buf);
-  let binary = "";
-  for (let i = 0; i < bytes.byteLength; i++)
-    binary += String.fromCharCode(bytes[i]);
-  return `data:${file.type};base64,${btoa(binary)}`;
-}
-
-export type WizardData = PersonalData & DniData & SelfieData;
-
-function toPayload(data: WizardData): Promise<RegisterPayload> {
-  return Promise.all([
-    fileToBase64(data.foto_dni_file),
-    fileToBase64(data.selfie_file),
-  ]).then(([dni64, selfie64]) => ({
-    nombre: data.nombre,
-    email: data.email,
-    dni: data.dni,
-    fecha_nacimiento: data.fecha_nacimiento,
-    foto_dni: dni64,
-    selfie: selfie64,
-  }));
-}
-
-export function createRegisterService(gw: IRegistrationGateway) {
+export function makeRegisterService(port: RegistrationPort) {
   return {
-    async start(
-      data: WizardData
-    ): Promise<{ idUsuario: string; estado: KycStatus }> {
-      const payload = await toPayload(data);
-      const res = await gw.start(payload);
-      return { idUsuario: res.idUsuario, estado: res.estado };
+    /** valida y normaliza cada paso */
+    validateDni(input: DniData): DniData {
+      return dniSchema.parse(input);
     },
-    async pollKyc(
-      id: string,
-      tries = 10,
-      intervalMs = 1500
-    ): Promise<KycStatus> {
-      for (let i = 0; i < tries; i++) {
-        const { estado } = await gw.kycState(id);
-        if (estado !== "pendiente") return estado;
-        await new Promise((r) => setTimeout(r, intervalMs));
+    validatePersonal(input: PersonalData): PersonalData {
+      return personalSchema.parse(input);
+    },
+    validateSelfie(input: SelfieData): SelfieData {
+      return selfieSchema.parse(input);
+    },
+
+    /** sube selfie (devuelve selfieId para guardarlo en dominio) */
+    async uploadSelfie(file: Blob): Promise<string> {
+      return await port.uploadSelfie(file);
+    },
+
+    /** compone el input final, valida y registra */
+    async register(
+      dni: DniData,
+      personal: PersonalData,
+      selfie: SelfieData
+    ): Promise<RegisteredUser> {
+      const input: RegisterInput = registerInputSchema.parse({
+        ...dni,
+        ...personal,
+        ...selfie,
+      });
+      try {
+        return await port.register(input);
+      } catch (e: any) {
+        if (e instanceof RegistrationError) throw e;
+        throw new RegistrationError("Fallo al registrar", "NETWORK");
       }
-      return "pendiente";
     },
-    retry: (p: Partial<RegisterPayload>) => gw.retry(p),
   };
 }
-
-// Instancia por defecto usando el adapter HTTP
-export const registerService = createRegisterService(registrationGateway);
