@@ -1,39 +1,23 @@
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { dniSchema, type DniData } from "../../model/register";
+import React from "react";
+import type { DniData } from "../../model/register";
 
-type Props = {
+export default function StepDNI({
+  onNext,
+}: {
   onNext: (data: DniData) => void;
-  onBack: () => void;
-  defaultValues?: Partial<DniData>;
-};
-
-export default function StepDNI({ onNext, onBack, defaultValues }: Props) {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<DniData>({
-    resolver: zodResolver(dniSchema),
-    defaultValues,
-  });
-
+}) {
+  const [dni, setDni] = React.useState("");
   return (
-    <form onSubmit={handleSubmit(onNext)} className="grid gap-3">
-      <label>
-        Foto del DNI
-        <input type="file" accept="image/*" {...register("foto_dni_file")} />
-        {errors.foto_dni_file && (
-          <small>{errors.foto_dni_file.message as string}</small>
-        )}
-      </label>
-
-      <div className="flex gap-2">
-        <button type="button" onClick={onBack}>
-          Atrás
-        </button>
-        <button type="submit">Continuar</button>
-      </div>
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        onNext({ dni });
+      }}
+      className="grid gap-2"
+    >
+      <label>DNI</label>
+      <input value={dni} onChange={(e) => setDni(e.target.value)} />
+      <button type="submit">Siguiente</button>
     </form>
   );
 }

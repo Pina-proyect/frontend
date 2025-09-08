@@ -1,7 +1,8 @@
-import type { RegisterPayload, KycStatus } from "./register";
+import type { RegisterInput, RegisteredUser } from "./register";
 
-export interface IRegistrationGateway {
-  start(p: RegisterPayload): Promise<{ estado: KycStatus; idUsuario: string }>;
-  kycState(id: string): Promise<{ estado: KycStatus }>;
-  retry(p: Partial<RegisterPayload>): Promise<void>;
+export interface RegistrationPort {
+  /** Endpoint final de registro */
+  register(input: RegisterInput): Promise<RegisteredUser>;
+  /** Subida de selfie; devuelve id/URL para guardar en dominio */
+  uploadSelfie(file: Blob): Promise<string>;
 }

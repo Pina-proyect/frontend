@@ -1,49 +1,47 @@
-// Tipos y schemas del registro (HU1.1)
 import { z } from "zod";
 
-// --- Helpers ---
-function isAdult(isoDate: string) {
-  const dob = new Date(isoDate);
-  const today = new Date();
-  let age = today.getFullYear() - dob.getFullYear();
-  const m = today.getMonth() - dob.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) age--;
-  return age >= 18;
-}
+/** Paso 1: DNI */
+export const dniSchema = z.object({
+  dni: z.string().min(7).max(10),
+});
+export type DniData = z.infer<typeof dniSchema>;
 
-// --- Esquemas por paso ---
+/** Paso 2: Datos personales */
 export const personalSchema = z.object({
-  nombre: z.string().min(2, "Nombre demasiado corto"),
+  name: z.string().min(2),
   email: z
     .string()
     .trim()
     .toLowerCase()
     .pipe(z.email({ message: "Email inválido" })),
-
-  dni: z.string().min(6).max(20),
-  fecha_nacimiento: z.string().refine(isAdult, "Debés ser mayor de 18 años"),
+  password: z.string().min(8),
 });
 export type PersonalData = z.infer<typeof personalSchema>;
 
-export const dniSchema = z.object({
-  // guardamos el File y luego lo convertimos en base64 antes de enviar
-  foto_dni_file: z.instanceof(File, { message: "Seleccioná una imagen" }),
-});
-export type DniData = z.infer<typeof dniSchema>;
-
+/** Paso 3: Selfie (en dominio guardamos un id/URL ya subido, no el File) */
 export const selfieSchema = z.object({
-  selfie_file: z.instanceof(File, { message: "Seleccioná una selfie" }),
+  selfieId: z.string().min(1),
 });
 export type SelfieData = z.infer<typeof selfieSchema>;
 
-// --- Payload final para la API ---
-export type KycStatus = "pendiente" | "verificada" | "rechazada";
+/** Input final de registro (composición de pasos) */
+export const registerInputSchema = dniSchema
+  .and(personalSchema)
+  .and(selfieSchema);
+export type RegisterInput = z.infer<typeof registerInputSchema>;
 
-export type RegisterPayload = {
-  nombre: string;
+/** Resultado de éxito */
+export type RegisteredUser = {
+  id: string;
   email: string;
-  dni: string;
-  fecha_nacimiento: string; // ISO
-  foto_dni: string; // base64
-  selfie: string; // base64
+  name: string;
 };
+
+export class RegistrationError extends Error {
+  constructor(
+    message: string,
+    public code?: "EMAIL_TAKEN" | "NETWORK" | "INVALID_INPUT"
+  ) {
+    super(message);
+  }
+}
