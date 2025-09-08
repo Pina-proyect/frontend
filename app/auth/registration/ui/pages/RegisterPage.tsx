@@ -79,7 +79,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto grid gap-4">
+    <main className="max-w-md mx-auto grid gap-4 mt-20">
       <h1>Registro</h1>
       {error && <div style={{ color: "tomato" }}>{error}</div>}
       {step === 0 && <StepDNI onNext={onDniSubmit} />}
