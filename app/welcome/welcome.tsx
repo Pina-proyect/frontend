@@ -8,69 +8,26 @@ import Ilustradora from "./ilustradora.jpg";
 import Podcaster from "./podcaster.jpg";
 import Musica from "./musica.jpg";
 
-/* --------------------------- utils opcional --------------------------- */
-function getComplementaryColor(hex: string) {
-  const s = hex.replace("#", "");
-  const r = parseInt(s.substring(0, 2), 16) / 255;
-  const g = parseInt(s.substring(2, 4), 16) / 255;
-  const b = parseInt(s.substring(4, 6), 16) / 255;
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b);
-  let h = 0,
-    sv = 0,
-    l = (max + min) / 2;
-  if (max !== min) {
-    const d = max - min;
-    sv = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-    switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0);
-        break;
-      case g:
-        h = (b - r) / d + 2;
-        break;
-      default:
-        h = (r - g) / d + 4;
-    }
-    h /= 6;
-  }
-  h = (h + 0.5) % 1;
-  const hue2rgb = (p: number, q: number, t: number) => {
-    if (t < 0) t += 1;
-    if (t > 1) t -= 1;
-    if (t < 1 / 6) return p + (q - p) * 6 * t;
-    if (t < 1 / 2) return q;
-    if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-    return p;
-  };
-  const q = l < 0.5 ? l * (1 + sv) : l + sv - l * sv;
-  const p = 2 * l - q;
-  const r2 = Math.round(hue2rgb(p, q, h + 1 / 3) * 255);
-  const g2 = Math.round(hue2rgb(p, q, h) * 255);
-  const b2 = Math.round(hue2rgb(p, q, h - 1 / 3) * 255);
-  return `#${((1 << 24) + (r2 << 16) + (g2 << 8) + b2).toString(16).slice(1)}`;
-}
-
 /* ------------------------------ Íconos ------------------------------- */
 const IconTip = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M12 1v4" /><circle cx="12" cy="9" r="3.5"/><path d="M7 22h10M5 18h14M6 15h12" />
+    <path d="M12 1v4" /><circle cx="12" cy="9" r="3.5" /><path d="M7 22h10M5 18h14M6 15h12" />
   </svg>
 );
 const IconLock = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <rect x="4" y="11" width="16" height="9" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/>
+    <rect x="4" y="11" width="16" height="9" rx="2" /><path d="M8 11V8a4 4 0 1 1 8 0v3" />
   </svg>
 );
 const IconFlag = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M4 3v18"/><path d="M4 4h12l-2 4 2 4H4"/>
+    <path d="M4 3v18" /><path d="M4 4h12l-2 4 2 4H4" />
   </svg>
 );
 const IconChat = () => (
   <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3 1.5-4A4 4 0 0 1 3 15V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z"/>
-    <path d="M8.5 10.5a1 1 0 1 0 0 2M12 10.5a1 1 0 1 0 0 2M15.5 10.5a1 1 0 1 0 0 2"/>
+    <path d="M21 15a4 4 0 0 1-4 4H8l-5 3 1.5-4A4 4 0 0 1 3 15V7a4 4 0 0 1 4-4h10a4 4 0 0 1 4 4z" />
+    <path d="M8.5 10.5a1 1 0 1 0 0 2M12 10.5a1 1 0 1 0 0 2M15.5 10.5a1 1 0 1 0 0 2" />
   </svg>
 );
 
@@ -79,10 +36,10 @@ type Accent = "primary" | "secondary";
 type FeatureProps = { icon: ReactNode; title: string; text: string; accent?: Accent };
 
 const FEATURES: FeatureProps[] = [
-  { icon: <IconTip />,  title: "Apoyos pagos",           text: "Recibe propinas y aporta valor extra a tus fans.", accent: "primary"   },
-  { icon: <IconLock />, title: "Contenido exclusivo",    text: "Publica posts, videos o perks solo para miembros.", accent: "secondary" },
-  { icon: <IconFlag />, title: "Campañas de recaudación", text: "Activa metas y celebra avances con tu comunidad.",  accent: "primary"   },
-  { icon: <IconChat />, title: "Soporte & comunidad",    text: "Herramientas simples, sin enredos técnicos.",       accent: "secondary" },
+  { icon: <IconTip />, title: "Apoyos pagos", text: "Recibe propinas y aporta valor extra a tus fans.", accent: "primary" },
+  { icon: <IconLock />, title: "Contenido exclusivo", text: "Publica posts, videos o perks solo para miembros.", accent: "secondary" },
+  { icon: <IconFlag />, title: "Campañas de recaudación", text: "Activa metas y celebra avances con tu comunidad.", accent: "primary" },
+  { icon: <IconChat />, title: "Soporte & comunidad", text: "Herramientas simples, sin enredos técnicos.", accent: "secondary" },
 ];
 
 function FeatureCard({ icon, title, text, accent = "primary" }: FeatureProps) {
@@ -138,8 +95,8 @@ function CreatorCTASection({ onCreate }: { onCreate: () => void }) {
           </button>
           <p className="text-sm text-black/60 mt-3">Gratis para empezar • Sin tarjeta</p>
         </div>
-        <img className="rounded-3xl w-full h-72 object-cover object-top" 
-        src={CreatorLeft} alt="Creador grabando" loading="lazy" />
+        <img className="rounded-3xl w-full h-72 object-cover object-top"
+          src={CreatorLeft} alt="Creador grabando" loading="lazy" />
       </div>
     </section>
   );
@@ -148,9 +105,9 @@ function CreatorCTASection({ onCreate }: { onCreate: () => void }) {
 /* --------------------------- Testimonios --------------------------- */
 type TestimonialT = { quote: string; name: string; role: string; avatar: string };
 const TESTIMONIALS: TestimonialT[] = [
-  { quote: "Subí mis ingresos sin cambiar mi rutina.",       name: "Valen", role: "Ilustradora", avatar: Ilustradora },
-  { quote: "Las membresías me dieron previsibilidad.",       name: "Ari",   role: "Podcaster",   avatar: Podcaster },
-  { quote: "Monté una campaña en minutos.",                  name: "Juana", role: "Música",      avatar: Musica },
+  { quote: "Subí mis ingresos sin cambiar mi rutina.", name: "Valen", role: "Ilustradora", avatar: Ilustradora },
+  { quote: "Las membresías me dieron previsibilidad.", name: "Ari", role: "Podcaster", avatar: Podcaster },
+  { quote: "Monté una campaña en minutos.", name: "Juana", role: "Música", avatar: Musica },
 ];
 
 function Testimonial({ quote, name, role, avatar }: TestimonialT) {
@@ -235,15 +192,26 @@ function MobileCTA({ onCreate }: { onCreate: () => void }) {
     </div>
   );
 }
+// Color HEX a RGBA con opacidad
+function hexToRgba(hex: string, alpha: number) {
+  let c = hex.replace('#', '');
+  if (c.length === 3) c = c.split('').map(x => x + x).join('');
+  const num = parseInt(c, 16);
+  const r = (num >> 16) & 255;
+  const g = (num >> 8) & 255;
+  const b = num & 255;
+  return `rgba(${r},${g},${b},${alpha})`;
+}
 
 /* =============================== PAGE =============================== */
 export function Welcome() {
   const navigate = useNavigate();
   const [primary, setPrimary] = useState("#38b6ff");
   const [secondary, setSecondary] = useState("#f28ae8");
-  const headlineColor = getComplementaryColor(primary);
 
   const handleComenzar = () => navigate("/auth/register");
+
+  const secondaryLight = hexToRgba(secondary, 0.15);
 
   return (
     <div
@@ -253,18 +221,6 @@ export function Welcome() {
         ["--color-secondary" as any]: secondary,
       }}
     >
-      {/* fondo sutil con tus colores */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{
-          background: `
-            radial-gradient(1200px 600px at 20% 10%, var(--color-primary)/.10, transparent 60%),
-            radial-gradient(1000px 500px at 80% 20%, var(--color-secondary)/.12, transparent 65%),
-            linear-gradient(180deg, #f8fafc 0%, #ffffff 100%)
-          `,
-        }}
-      />
-
       {/* NAVBAR */}
       <header className="flex items-center justify-between px-6 py-4 max-w-7xl mx-auto">
         <nav className="flex items-center space-x-8">
@@ -285,7 +241,8 @@ export function Welcome() {
               type="text"
               placeholder="Buscar creadores"
               aria-label="Buscar creadores"
-              className="pl-4 pr-10 py-2 w-28 focus:w-48 transition-all duration-300 rounded-full text-sm bg-rose-100 border focus:outline-none focus:ring-2 border-[var(--color-secondary)] border-opacity-30 focus:ring-[var(--color-secondary)] focus:ring-opacity-50"
+              className="pl-4 pr-10 py-2 w-28 focus:w-48 transition-all duration-300 rounded-full text-sm border focus:outline-none focus:ring-2 border-[var(--color-secondary)] border-opacity-30 focus:ring-[var(--color-secondary)] focus:ring-opacity-50"
+              style={{ background: secondaryLight }}
             />
             <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-secondary)]">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
@@ -320,7 +277,6 @@ export function Welcome() {
       <main className="flex items-center justify-center pt-20 pb-8 px-6">
         <div className="text-center max-w-6xl mx-auto flex flex-col min-h-[60vh] justify-end">
           <div className="mb-8">
-            {/* si querés complementar el color: style={{ color: headlineColor }} */}
             <h1 className="text-8xl font-bold text-black mb-6 leading-tight">
               Crea con libertad.
               <br />
