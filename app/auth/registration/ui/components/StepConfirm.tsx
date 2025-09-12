@@ -1,50 +1,42 @@
-import type { PersonalData, DniData, SelfieData } from "../../model/register";
-
-type Props = {
-  data: PersonalData & Partial<DniData> & Partial<SelfieData>;
-  onBack: () => void;
-  onSubmit: () => Promise<void> | void;
-  isSubmitting?: boolean;
-};
+import React from "react";
+import type { DniData, PersonalData, SelfieData } from "../../model/register";
 
 export default function StepConfirm({
-  data,
+  dni,
+  personal,
+  selfie,
   onBack,
-  onSubmit,
-  isSubmitting,
-}: Props) {
+  onConfirm,
+  loading,
+}: {
+  dni: DniData;
+  personal: PersonalData;
+  selfie: SelfieData;
+  onBack: () => void;
+  onConfirm: () => void;
+  loading?: boolean;
+}) {
   return (
-    <section className="grid gap-4">
+    <div className="grid gap-2">
       <h2>Confirmá tus datos</h2>
-      <ul>
-        <li>
-          <strong>Nombre:</strong> {data.nombre}
-        </li>
-        <li>
-          <strong>Email:</strong> {data.email}
-        </li>
-        <li>
-          <strong>DNI:</strong> {data.dni}
-        </li>
-        <li>
-          <strong>Nacimiento:</strong> {data.fecha_nacimiento}
-        </li>
-        <li>
-          <strong>Foto DNI:</strong> {data.foto_dni_file ? "Cargada" : "—"}
-        </li>
-        <li>
-          <strong>Selfie:</strong> {data.selfie_file ? "Cargada" : "—"}
-        </li>
-      </ul>
-
+      <div>
+        <strong>DNI:</strong> {dni.dni}
+      </div>
+      <div>
+        <strong>Nombre:</strong> {personal.name}
+      </div>
+      <div>
+        <strong>Email:</strong> {personal.email}
+      </div>
+      <div>
+        <strong>SelfieId:</strong> {selfie.selfieId}
+      </div>
       <div className="flex gap-2">
-        <button type="button" onClick={onBack}>
-          Atrás
-        </button>
-        <button onClick={() => void onSubmit()} disabled={isSubmitting}>
-          {isSubmitting ? "Enviando..." : "Enviar para verificación"}
+        <button onClick={onBack}>Volver</button>
+        <button onClick={onConfirm} disabled={loading}>
+          {loading ? "Registrando..." : "Confirmar"}
         </button>
       </div>
-    </section>
+    </div>
   );
 }

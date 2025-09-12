@@ -1,36 +1,54 @@
-// Adapter HTTP hacia tu backend (usa fetch directamente)
-import type { IRegistrationGateway } from "../model/registration.port";
-import type { RegisterPayload, KycStatus } from "../model/register";
+import type { RegistrationPort } from "../model/registration.port";
+import type { RegisterInput, RegisteredUser } from "../model/register";
+import { RegistrationError } from "../model/register";
 
-// Pequeño wrapper fetch
-async function http<T>(url: string, init?: RequestInit): Promise<T> {
-  const res = await fetch(url, {
-    headers: { "Content-Type": "application/json" },
-    ...init,
-  });
-  if (!res.ok) {
-    const msg = await res.text().catch(() => res.statusText);
-    throw new Error(msg || `HTTP ${res.status}`);
-  }
-  return res.json() as Promise<T>;
+/** Real */
+export function makeRegistrationGateway(baseUrl: string): RegistrationPort {
+  return {
+    async uploadSelfie(file: Blob): Promise<string> {
+      const fd = new FormData();
+      fd.append("file", file);
+      const res = await fetch(`${baseUrl}/files/selfie`, {
+        method: "POST",
+        body: fd,
+      });
+      if (!res.ok)
+        throw new RegistrationError("Error subiendo selfie", "NETWORK");
+      const data = await res.json();
+      return data.id as string; // { id: "selfie_123" }
+    },
+
+    async register(input: RegisterInput): Promise<RegisteredUser> {
+      const res = await fetch(`${baseUrl}/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(input),
+      });
+      if (res.status === 409)
+        throw new RegistrationError("Email ya registrado", "EMAIL_TAKEN");
+      if (!res.ok) throw new RegistrationError("Error de red", "NETWORK");
+      return (await res.json()) as RegisteredUser;
+    },
+  };
 }
 
-export const registrationGateway: IRegistrationGateway = {
-  start(payload: RegisterPayload) {
-    return http<{ mensaje: string; estado: KycStatus; idUsuario: string }>(
-      "/api/registro/creadora",
-      { method: "POST", body: JSON.stringify(payload) }
-    );
-  },
-  kycState(id: string) {
-    return http<{ estado: KycStatus }>(`/api/kyc/estado/${id}`, {
-      method: "GET",
-    });
-  },
-  retry(body: Partial<RegisterPayload>) {
-    return http<unknown>("/api/kyc/reintento", {
-      method: "POST",
-      body: JSON.stringify(body),
-    }).then(() => undefined);
-  },
-};
+/** Fake (para desarrollar UI sin backend) */
+export function makeFakeRegistrationGateway(): RegistrationPort {
+  return {
+    async uploadSelfie(_file: Blob): Promise<string> {
+      await delay(500);
+      return "selfie_demo_1";
+    },
+    async register(input: RegisterInput): Promise<RegisteredUser> {
+      await delay(700);
+      if (input.email === "taken@example.com") {
+        throw new RegistrationError("Email ya registrado", "EMAIL_TAKEN");
+      }
+      return { id: "u_1", email: input.email, name: input.name };
+    },
+  };
+}
+
+function delay(ms: number) {
+  return new Promise((r) => setTimeout(r, ms));
+}
