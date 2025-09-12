@@ -7,6 +7,7 @@ import CreatorRight from "./creator-right.jpg";
 import Ilustradora from "./ilustradora.jpg";
 import Podcaster from "./podcaster.jpg";
 import Musica from "./musica.jpg";
+import useIsClient from "~/shared/hooks/useIsClient";
 
 /* ------------------------------ Íconos ------------------------------- */
 const IconTip = () => (
@@ -88,7 +89,7 @@ function CreatorCTASection({ onCreate }: { onCreate: () => void }) {
           <h3 className="text-xl font-semibold mb-3">Monetiza tu talento</h3>
           <button
             onClick={onCreate}
-            className="px-6 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-black/10"
+            className=" cursor-pointer px-6 py-3 rounded-full text-white font-semibold shadow-lg hover:shadow-xl focus:outline-none focus:ring-4 focus:ring-black/10"
             style={{ background: "var(--color-secondary)" }}
           >
             Crear cuenta
@@ -124,6 +125,7 @@ function Testimonial({ quote, name, role, avatar }: TestimonialT) {
     </figure>
   );
 }
+
 
 function TestimonialsSection() {
   return (
@@ -186,7 +188,7 @@ function MobileCTA({ onCreate }: { onCreate: () => void }) {
           className="flex-1 py-3 rounded-full text-white text-center font-semibold shadow-lg focus:outline-none focus:ring-4 focus:ring-black/10"
           style={{ background: "var(--color-primary)" }}
         >
-          Ingresar
+          Iniciar sesión
         </Link>
       </div>
     </div>
@@ -205,6 +207,7 @@ function hexToRgba(hex: string, alpha: number) {
 
 /* =============================== PAGE =============================== */
 export function Welcome() {
+  const isClient = useIsClient();
   const navigate = useNavigate();
   const [primary, setPrimary] = useState("#38b6ff");
   const [secondary, setSecondary] = useState("#f28ae8");
@@ -244,7 +247,7 @@ export function Welcome() {
               className="pl-4 pr-10 py-2 w-28 focus:w-48 transition-all duration-300 rounded-full text-sm border focus:outline-none focus:ring-2 border-[var(--color-secondary)] border-opacity-30 focus:ring-[var(--color-secondary)] focus:ring-opacity-50"
               style={{ background: secondaryLight }}
             />
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-secondary)]">
+            <div className="cursor-pointer absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-secondary)]">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden>
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
               </svg>
@@ -252,14 +255,39 @@ export function Welcome() {
           </div>
           <button
             onClick={handleComenzar}
-            className="px-4 py-2 rounded-full font-medium text-white transition-colors hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-black/10"
+            className="
+              cursor-pointer
+              hidden 
+              md:inline-flex 
+              px-4 
+              py-2 
+              rounded-full 
+              font-medium 
+              text-white 
+              transition-colors 
+              hover:brightness-110 
+              focus:outline-none 
+              focus:ring-4 
+              focus:ring-black/10"
             style={{ background: "var(--color-secondary)" }}
           >
             Comenzar
           </button>
           <Link
             to="/auth/login"
-            className="px-4 py-2 rounded-full font-medium text-white transition-colors hover:brightness-110 focus:outline-none focus:ring-4 focus:ring-black/10"
+            className="
+              hidden 
+              md:inline-flex
+              px-4 
+              py-2 
+              rounded-full 
+              font-medium 
+              text-white 
+              transition-colors 
+              hover:brightness-110 
+              focus:outline-none 
+              focus:ring-4 
+              focus:ring-black/10"
             style={{ background: "var(--color-primary)" }}
           >
             Iniciar sesión
@@ -268,16 +296,20 @@ export function Welcome() {
       </header>
 
       {/* Pickers de color */}
-      <div className="fixed bottom-6 right-6 flex flex-col items-end space-y-4 z-50">
-        <Colorizer defaultColor="#38b6ff" onChange={setPrimary} classNameProperty="fixed bottom-15 right-4 w-12 h-12 rounded-full cursor-pointer shadow-lg" />
-        <Colorizer defaultColor="#f28ae8" onChange={setSecondary} classNameProperty="fixed bottom-4 right-4 w-12 h-12 rounded-full cursor-pointer shadow-lg" />
-      </div>
+      {
+        isClient && (
+          <div className="fixed bottom-6 right-6 flex flex-col items-end space-y-4 z-50">
+            <Colorizer defaultColor="#38b6ff" onChange={setPrimary} classNameProperty="fixed bottom-15 right-4 w-12 h-12 rounded-full cursor-pointer shadow-lg" />
+            <Colorizer defaultColor="#f28ae8" onChange={setSecondary} classNameProperty="fixed bottom-4 right-4 w-12 h-12 rounded-full cursor-pointer shadow-lg" />
+          </div>
+        )
+      }
 
       {/* HERO */}
       <main className="flex items-center justify-center pt-20 pb-8 px-6">
         <div className="text-center max-w-6xl mx-auto flex flex-col min-h-[60vh] justify-end">
           <div className="mb-8">
-            <h1 className="text-8xl font-bold text-black mb-6 leading-tight">
+            <h1 className="text-[7vw] font-bold text-black mb-6 leading-tight">
               Crea con libertad.
               <br />
               Gana con facilidad.
@@ -287,7 +319,18 @@ export function Welcome() {
             </p>
             <button
               onClick={handleComenzar}
-              className="px-8 py-4 rounded-full text-white text-lg font-semibold transition-colors shadow-lg hover:shadow-xl"
+              className="
+                cursor-pointer
+                hidden 
+                md:inline-flex
+                px-8 
+                py-4 rounded-full 
+                text-white 
+                text-lg 
+                font-semibold 
+                transition-colors 
+                shadow-lg 
+                hover:shadow-xl"
               style={{ background: "var(--color-secondary)" }}
             >
               Comenzar

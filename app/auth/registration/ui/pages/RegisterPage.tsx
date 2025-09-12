@@ -79,7 +79,7 @@ export default function RegisterPage() {
   }
 
   return (
-    <main className="max-w-md mx-auto grid gap-4 mt-20">
+    <main className="max-w-md mx-auto grid gap-4 mt-20 text-black">
       <h1>Registro</h1>
       {error && <div style={{ color: "tomato" }}>{error}</div>}
       {step === 0 && <StepDNI onNext={onDniSubmit} />}
@@ -99,7 +99,4 @@ export default function RegisterPage() {
       )}
     </main>
   );
-}
-function setSplash(arg0: boolean): void {
-  throw new Error("Function not implemented.");
 }
