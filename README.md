@@ -18,10 +18,10 @@ A modern, production-ready template for building full-stack React applications u
 
 ### Installation
 
-Install the dependencies:
+Install the dependencies (Yarn preferred):
 
 ```bash
-npm install
+yarn install
 ```
 
 ### Development
@@ -29,7 +29,7 @@ npm install
 Start the development server with HMR:
 
 ```bash
-npm run dev
+yarn dev
 ```
 
 Your application will be available at `http://localhost:5173`.
@@ -39,7 +39,7 @@ Your application will be available at `http://localhost:5173`.
 Create a production build:
 
 ```bash
-npm run build
+yarn build
 ```
 
 ## Deployment

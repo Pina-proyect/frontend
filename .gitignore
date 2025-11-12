@@ -4,3 +4,23 @@
 # React Router
 /.react-router/
 /build/
+
+# Vite/React Router build
+/dist/
+
+# Environment files (do not commit secrets)
+.env
+.env.*
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor/OS
+.vscode/
+.DS_Store
+
+# Test coverage
+coverage/
